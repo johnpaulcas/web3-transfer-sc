@@ -24,7 +24,7 @@ const zkTestnet = {
 
 const config: HardhatUserConfig = {
   zksolc: {
-    version: '1.3.8',
+    version: '1.3.10',
     compilerSource: 'binary',
     settings: {},
   },
@@ -40,6 +40,7 @@ const config: HardhatUserConfig = {
   networks: {
     goerli: {
       url: process.env.GOERLI_URL || '',
+      zksync: false,
     },
     zkTestnet,
   },
