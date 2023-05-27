@@ -16,6 +16,21 @@ interface IMultiTokenDisperser {
         uint256 tokenIdsLength
     );
 
+    /// @notice Emitted when Ether is dispersed
+    event EtherDispersed(
+        address indexed from,
+        address[] indexed to,
+        uint256[] amount
+    );
+
+    /// @notice Emitted when ERC20 tokens are dispersed
+    event ERC20Dispersed(
+        address indexed token,
+        address indexed from,
+        address[] indexed to,
+        uint256[] amount
+    );
+
     /// @notice Emitted when ERC721 tokens are dispersed
     event ERC721Dispersed(
         address indexed token,
@@ -33,20 +48,31 @@ interface IMultiTokenDisperser {
         uint256[] amount
     );
 
-    /// @notice Emitted when ERC20 tokens are dispersed
-    event ERC20Dispersed(
-        address indexed token,
-        address indexed from,
-        address[] indexed to,
-        uint256[] amount
-    );
+    /// @notice Disperse Ether to multiple recipients.
+    /// @dev The calling account must have enough Ether to cover the total amount being dispersed. The function will revert if the balance conditions are not met.
+    ///     This function emits an {EtherDispersed} event.
+    /// @param recipients The addresses of the recipients
+    /// @param amounts The amounts of Ether to disperse to each recipient
+    /// @param total The total amount of Ether being dispersed. This must be equal to the sum of all individual amounts.
+    function disperseEther(
+        address[] calldata recipients,
+        uint256[] calldata amounts,
+        uint256 total
+    ) external payable;
 
-    /// @notice Emitted when Ether is dispersed
-    event EtherDispersed(
-        address indexed from,
-        address[] indexed to,
-        uint256[] amount
-    );
+    /// @notice Disperse ERC20 tokens to multiple recipients.
+    /// @dev The calling account must own enough tokens to cover the total amount being dispersed. The function will revert if the ownership conditions are not met.
+    ///     This function emits an {ERC20Dispersed} event.
+    /// @param token The ERC20 token to disperse
+    /// @param recipients The addresses of the recipients
+    /// @param amounts The amounts of tokens to disperse to each recipient
+    /// @param total The total amount of tokens being dispersed. This must be equal to the sum of all individual amounts.
+    function disperseERC20(
+        IERC20 token,
+        address[] calldata recipients,
+        uint256[] calldata amounts,
+        uint256 total
+    ) external;
 
     /// @notice Disperse ERC721 tokens to multiple recipients.
     /// @dev The calling account must own the tokens being dispersed. The function will revert if the ownership conditions are not met.
@@ -73,30 +99,4 @@ interface IMultiTokenDisperser {
         uint256[] calldata tokenIds,
         uint256[] calldata amounts
     ) external;
-
-    /// @notice Disperse ERC20 tokens to multiple recipients.
-    /// @dev The calling account must own enough tokens to cover the total amount being dispersed. The function will revert if the ownership conditions are not met.
-    ///     This function emits an {ERC20Dispersed} event.
-    /// @param token The ERC20 token to disperse
-    /// @param recipients The addresses of the recipients
-    /// @param amounts The amounts of tokens to disperse to each recipient
-    /// @param total The total amount of tokens being dispersed. This must be equal to the sum of all individual amounts.
-    function disperseERC20(
-        IERC20 token,
-        address[] calldata recipients,
-        uint256[] calldata amounts,
-        uint256 total
-    ) external;
-
-    /// @notice Disperse Ether to multiple recipients.
-    /// @dev The calling account must have enough Ether to cover the total amount being dispersed. The function will revert if the balance conditions are not met.
-    ///     This function emits an {EtherDispersed} event.
-    /// @param recipients The addresses of the recipients
-    /// @param amounts The amounts of Ether to disperse to each recipient
-    /// @param total The total amount of Ether being dispersed. This must be equal to the sum of all individual amounts.
-    function disperseEther(
-        address[] calldata recipients,
-        uint256[] calldata amounts,
-        uint256 total
-    ) external payable;
 }

@@ -9,6 +9,48 @@ import "./interfaces/IMultiTokenDisperser.sol";
 contract MultiTokenDisperser is IMultiTokenDisperser {
     using Address for address;
 
+    function disperseEther(
+        address[] calldata recipients,
+        uint256[] calldata amounts,
+        uint256 total
+    ) external payable override {
+        _validateRecipientsAndTokens(recipients, amounts);
+
+        if (msg.value != total) {
+            revert InsufficientBalance(msg.sender, total);
+        }
+
+        for (uint256 i = 0; i < recipients.length; i++) {
+            Address.sendValue(payable(recipients[i]), amounts[i]);
+        }
+
+        emit EtherDispersed(msg.sender, recipients, amounts);
+    }
+
+    function disperseERC20(
+        IERC20 token,
+        address[] calldata recipients,
+        uint256[] calldata amounts,
+        uint256 total
+    ) external override {
+        _validateRecipientsAndAmounts(recipients, amounts);
+
+        if (token.balanceOf(msg.sender) < total) {
+            revert InsufficientBalance(msg.sender, total);
+        }
+
+        for (uint256 i = 0; i < recipients.length; i++) {
+            bool success = token.transferFrom(
+                msg.sender,
+                recipients[i],
+                amounts[i]
+            );
+            require(success, "MultiTokenDisperser: ERC20 transfer failed");
+        }
+
+        emit ERC20Dispersed(address(token), msg.sender, recipients, amounts);
+    }
+
     function disperseERC721(
         IERC721 token,
         address[] calldata recipients,
@@ -49,48 +91,6 @@ contract MultiTokenDisperser is IMultiTokenDisperser {
             tokenIds,
             amounts
         );
-    }
-
-    function disperseERC20(
-        IERC20 token,
-        address[] calldata recipients,
-        uint256[] calldata amounts,
-        uint256 total
-    ) external override {
-        _validateRecipientsAndAmounts(recipients, amounts);
-
-        if (token.balanceOf(msg.sender) < total) {
-            revert InsufficientBalance(msg.sender, total);
-        }
-
-        for (uint256 i = 0; i < recipients.length; i++) {
-            bool success = token.transferFrom(
-                msg.sender,
-                recipients[i],
-                amounts[i]
-            );
-            require(success, "MultiTokenDisperser: ERC20 transfer failed");
-        }
-
-        emit ERC20Dispersed(address(token), msg.sender, recipients, amounts);
-    }
-
-    function disperseEther(
-        address[] calldata recipients,
-        uint256[] calldata amounts,
-        uint256 total
-    ) external payable override {
-        _validateRecipientsAndTokens(recipients, amounts);
-
-        if (msg.value != total) {
-            revert InsufficientBalance(msg.sender, total);
-        }
-
-        for (uint256 i = 0; i < recipients.length; i++) {
-            Address.sendValue(payable(recipients[i]), amounts[i]);
-        }
-
-        emit EtherDispersed(msg.sender, recipients, amounts);
     }
 
     function _validateRecipientsAndTokens(
