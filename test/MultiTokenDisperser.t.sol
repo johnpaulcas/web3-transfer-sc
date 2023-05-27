@@ -4,6 +4,7 @@ pragma solidity 0.8.9;
 import {BaseTest} from "./base/BaseTest.sol";
 import {BaseMultiTokenDisperserTest} from "./base/BaseMultiTokenDisperser.t.sol";
 
+import "../src/interfaces/IMultiTokenDisperser.sol";
 import "../src/MultiTokenDisperser.sol";
 
 contract MultiTokenDisperserTest is BaseMultiTokenDisperserTest {
@@ -45,6 +46,164 @@ contract MultiTokenDisperserTest is BaseMultiTokenDisperserTest {
         }
     }
 
+    function testDisperseEther_revert_MismatchedArrayLengths() public {
+        address from = alice;
+        address[] memory recipients = createAccounts(3);
+
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = 100;
+        amounts[1] = 200;
+
+        uint256 totalAmounts = 300;
+
+        vm.deal(from, totalAmounts);
+
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                MismatchedArrayLengths.selector,
+                recipients.length,
+                amounts.length
+            )
+        );
+
+        vm.prank(from);
+        disperser.disperseEther{value: totalAmounts}(
+            recipients,
+            amounts,
+            totalAmounts
+        );
+    }
+
+    function testFailDisperseEtherMismatchedArrayLengths() public {
+        address from = alice;
+        address[] memory recipients = createAccounts(3);
+
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = 100;
+        amounts[1] = 200;
+
+        uint256 totalAmounts = 300;
+
+        vm.deal(from, totalAmounts);
+
+        vm.prank(from);
+        disperser.disperseEther{value: totalAmounts}(
+            recipients,
+            amounts,
+            totalAmounts
+        );
+    }
+
+    function testDisperseEther_revert_InsufficientBalance() public {
+        address from = alice;
+        address[] memory recipients = createAccounts(3);
+
+        uint256[] memory amounts = new uint256[](3);
+        amounts[0] = 100;
+        amounts[1] = 200;
+        amounts[2] = 300;
+
+        uint256 totalAmounts = 500;
+        vm.deal(from, totalAmounts);
+
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                InsufficientBalance.selector,
+                from,
+                totalAmounts
+            )
+        );
+
+        vm.prank(from);
+        disperser.disperseEther{value: 400}(recipients, amounts, totalAmounts);
+    }
+
+    function testFailDisperseEtherInsufficientBalance() public {
+        address from = alice;
+
+        address[] memory recipients = createAccounts(3);
+
+        uint256[] memory amounts = new uint256[](3);
+        amounts[0] = 100;
+        amounts[1] = 200;
+        amounts[2] = 300;
+
+        uint256 totalAmounts = 500;
+        vm.deal(from, totalAmounts);
+
+        vm.prank(from);
+        disperser.disperseEther{value: 400}(recipients, amounts, totalAmounts);
+    }
+
+    function testDisperseEther_revert_bytesInsufficientBalance() public {
+        address from = alice;
+        address[] memory recipients = createAccounts(5);
+
+        uint256[] memory amounts = new uint256[](5);
+        amounts[0] = 100;
+        amounts[1] = 200;
+        amounts[2] = 300;
+        amounts[3] = 400;
+        amounts[4] = 500;
+
+        uint256 totalAmounts = 1000;
+        vm.deal(from, totalAmounts);
+
+        vm.expectRevert(bytes("Address: insufficient balance"));
+
+        vm.prank(from);
+        disperser.disperseEther{value: totalAmounts}(
+            recipients,
+            amounts,
+            totalAmounts
+        );
+    }
+
+    function testFailDisperseEtherBytesInsufficientBalance() public {
+        address from = alice;
+        address[] memory recipients = createAccounts(5);
+
+        uint256[] memory amounts = new uint256[](5);
+        amounts[0] = 100;
+        amounts[1] = 200;
+        amounts[2] = 300;
+        amounts[3] = 400;
+        amounts[4] = 500;
+
+        uint256 totalAmounts = 1000;
+        vm.deal(from, totalAmounts);
+
+        vm.prank(from);
+        disperser.disperseEther{value: totalAmounts}(
+            recipients,
+            amounts,
+            totalAmounts
+        );
+    }
+
+    function testFailDisperseEtherOutOfFund() public {
+        address from = alice;
+        address[] memory recipients = createAccounts(5);
+
+        uint256[] memory amounts = new uint256[](5);
+        amounts[0] = 100;
+        amounts[1] = 200;
+        amounts[2] = 300;
+        amounts[3] = 400;
+        amounts[4] = 500;
+
+        uint256 totalAmounts = 1500;
+
+        vm.prank(from);
+        disperser.disperseEther{value: totalAmounts}(
+            recipients,
+            amounts,
+            totalAmounts
+        );
+    }
+
+    // Disperse ERC20 ==================
+
     function testDisperseERC20() public {
         address from = alice;
 
@@ -74,6 +233,8 @@ contract MultiTokenDisperserTest is BaseMultiTokenDisperserTest {
             assertEq(mockERC20.balanceOf(recipients[n]), amounts[n]);
         }
     }
+
+    // Disperse ERC721 ==================
 
     function testDisperseERC721() public {
         address from = alice;
