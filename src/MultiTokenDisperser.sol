@@ -7,8 +7,6 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "./interfaces/IMultiTokenDisperser.sol";
 
 contract MultiTokenDisperser is IMultiTokenDisperser {
-    using Address for address;
-
     function disperseEther(
         address[] calldata recipients,
         uint256[] calldata amounts,
