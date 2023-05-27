@@ -34,10 +34,7 @@ contract MultiTokenDisperser is IMultiTokenDisperser {
         uint256 total
     ) external override {
         _validateRecipientsAndAmounts(recipients, amounts);
-
-        if (token.balanceOf(msg.sender) < total) {
-            revert InsufficientBalance(msg.sender, total);
-        }
+        _validateSufficientBalance(token, msg.sender, total);
 
         for (uint256 i = 0; i < recipients.length; i++) {
             bool success = token.transferFrom(
