@@ -52,8 +52,7 @@ const config: HardhatUserConfig = {
   },
   paths: {
     sources: 'src',
-    cache: 'cache-zk',
-    artifacts: 'artifacts-zk',
+    cache: 'cache_forge',
   },
 }
 
