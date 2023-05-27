@@ -88,6 +88,16 @@ contract MultiTokenDisperser is IMultiTokenDisperser {
         );
     }
 
+    function _validateSufficientBalance(
+        IERC20 token,
+        address sender,
+        uint256 total
+    ) internal view {
+        if (token.balanceOf(sender) < total) {
+            revert InsufficientBalance(sender, total);
+        }
+    }
+
     function _validateRecipientsAndTokens(
         address[] memory recipients,
         uint256[] memory tokenIds
@@ -108,16 +118,6 @@ contract MultiTokenDisperser is IMultiTokenDisperser {
     ) internal pure {
         if (recipients.length != values.length) {
             revert MismatchedArrayLengths(recipients.length, values.length);
-        }
-    }
-
-    function _validateSufficientBalance(
-        IERC20 token,
-        address sender,
-        uint256 total
-    ) internal view {
-        if (token.balanceOf(sender) < total) {
-            revert InsufficientBalance(sender, total);
         }
     }
 }
