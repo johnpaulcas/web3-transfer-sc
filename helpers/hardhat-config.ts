@@ -11,10 +11,16 @@ export const networkConfig: networkConfigInfo = {
   localhost: {},
   hardhat: {},
   goerli: {
-    blockConfirmations: 5,
+    blockConfirmations: 3,
+  },
+  mainnet: {
+    blockConfirmations: 3,
   },
   zkTestnet: {
-    blockConfirmations: 5,
+    blockConfirmations: 3,
+  },
+  zkEra: {
+    blockConfirmations: 3,
   },
 }
 
