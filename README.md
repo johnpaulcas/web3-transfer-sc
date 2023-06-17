@@ -1,4 +1,4 @@
-# MultiTokenDisperser [🌐 web3transfer.io](https://web3transfer.io)
+# [MultiTokenDisperser](https://web3transfer.io)
 
 [![DApp](https://img.shields.io/badge/Access-DApp-blue)](https://www.web3transfer.io/) ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
 
