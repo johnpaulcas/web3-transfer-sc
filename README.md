@@ -23,7 +23,7 @@
 
 ### Testnets
 
-- **zkSync Era Testnet (Ethereum)**: [0x01e33AFEae5853239e3FC6Ab65F153A0e2dB9219](https://goerli.explorer.zksync.io/address/0x01e33AFEae5853239e3FC6Ab65F153A0e2dB9219)
+- **zkSync Era Testnet**: [0x01e33AFEae5853239e3FC6Ab65F153A0e2dB9219](https://goerli.explorer.zksync.io/address/0x01e33AFEae5853239e3FC6Ab65F153A0e2dB9219)
 
 ## 🚀 Try It Out
 - **Website**: [web3transfer.io](https://web3transfer.io)
