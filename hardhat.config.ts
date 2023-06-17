@@ -22,6 +22,17 @@ const zkTestnet = {
   verifyURL: process.env.ZK_TESTNET || '',
 }
 
+const zkEra = {
+  url: process.env.ZK_MAINNET_URL || '',
+  ethNetwork: 'mainnet',
+  zksync: true,
+  accounts:
+    process.env.ZK_MAINNET_PRIVATE_KEY !== undefined
+      ? [process.env.ZK_MAINNET_PRIVATE_KEY]
+      : [],
+  verifyURL: process.env.ZK_MAINNET_EXPLORER || '',
+}
+
 const config: HardhatUserConfig = {
   zksolc: {
     version: '1.3.10',
@@ -42,7 +53,12 @@ const config: HardhatUserConfig = {
       url: process.env.GOERLI_URL || '',
       zksync: false,
     },
+    mainnet: {
+      url: process.env.MAINNET_URL || '',
+      zksync: false,
+    },
     zkTestnet,
+    zkEra,
   },
   namedAccounts: {
     deployer: {
@@ -51,8 +67,11 @@ const config: HardhatUserConfig = {
     },
   },
   paths: {
-    sources: 'src',
-    cache: 'cache_forge',
+    sources: './contracts',
+    tests: './test',
+    cache: './cache',
+    artifacts: './artifacts',
+    deployments: './deployments',
   },
 }
 
